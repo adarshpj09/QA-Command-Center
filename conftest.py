@@ -14,7 +14,11 @@ def pytest_runtest_makereport(item, call):
 
 @pytest.fixture
 def driver(request):
-    driver = webdriver.Chrome()
+    options = webdriver.ChromeOptions()
+    if os.getenv("HEADLESS", "0") == "1":
+        options.add_argument("--headless=new")
+        options.add_argument("--window-size=1920,1080")
+    driver = webdriver.Chrome(options=options)
     driver.implicitly_wait(5)
     yield driver
     rep = getattr(request.node, "rep_call", None)
