@@ -3,6 +3,7 @@ import requests
 from jsonschema import validate
 
 BASE_URL = "https://jsonplaceholder.typicode.com"
+pytestmark = [pytest.mark.api, pytest.mark.regression]
 
 POST_SCHEMA = {
     "type": "object",
@@ -15,7 +16,7 @@ POST_SCHEMA = {
     },
 }
 
-
+@pytest.mark.smoke
 def test_get_all_posts():
     response = requests.get(f"{BASE_URL}/posts", timeout=10)
     assert response.status_code == 200

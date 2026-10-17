@@ -1,10 +1,22 @@
+import os
 import pytest
 from selenium import webdriver
 
 
+@pytest.hookimpl(tryfirst=True, hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    outcome = yield
+    report = outcome.get_result()
+    setattr(item, "rep_" + report.when, report)
+
+
 @pytest.fixture
-def driver():
+def driver(request):
     driver = webdriver.Chrome()
     driver.implicitly_wait(5)
     yield driver
+    rep = getattr(request.node, "rep_call", None)
+    if rep and rep.failed:
+        os.makedirs("reports/screenshots", exist_ok=True)
+        driver.save_screenshot(f"reports/screenshots/{request.node.name}.png")
     driver.quit()

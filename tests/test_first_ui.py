@@ -2,7 +2,10 @@ import pytest
 from selenium.webdriver.common.by import By
 from pages.login_page import LoginPage
 
+pytestmark = [pytest.mark.ui, pytest.mark.regression]
 
+
+@pytest.mark.smoke
 def test_login_success(driver):
     page = LoginPage(driver)
     page.open()
