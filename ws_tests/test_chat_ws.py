@@ -1,5 +1,6 @@
 import json
 import time
+from contextlib import contextmanager
 
 import pytest
 from websockets.sync.client import connect
@@ -12,11 +13,12 @@ def ping(ws):
     return json.loads(ws.recv(timeout=5))
 
 
+@contextmanager
 def connect_ready(url):
     """Connect and confirm the server is handling this client."""
-    ws = connect(url)
-    assert ping(ws) == {"type": "pong"}
-    return ws
+    with connect(url) as ws:
+        assert ping(ws) == {"type": "pong"}
+        yield ws
 
 
 @pytest.mark.smoke
@@ -78,7 +80,7 @@ def test_connection_stays_stable_over_many_messages(ws_url):
 
 
 def test_client_can_reconnect_after_disconnect(ws_url):
-    first = connect_ready(ws_url)
-    first.close()
+    with connect_ready(ws_url):
+        pass
     with connect_ready(ws_url) as second:
         assert ping(second) == {"type": "pong"}
