@@ -3,3 +3,6 @@ __pycache__/
 .pytest_cache/
 debug.png
 reports/
+jmeter.log
+performance/results*.jtl
+performance/html-report*/
